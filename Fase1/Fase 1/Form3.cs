@@ -17,7 +17,8 @@ namespace Fase_1
             Dictionary<string, List<int>> LastTree = Tree.LastTree;
 
             LAST.ColumnCount = LastTree.Count;
-            LAST.RowCount = 400;
+            LAST.RowCount = 100;
+            LAST.Rows[0].DefaultCellStyle.BackColor = Color.Yellow;
             for (int i = 0; i < LastTree.Count; i++)
             {
                 string aLast = LastTree.ElementAt(i).Key;

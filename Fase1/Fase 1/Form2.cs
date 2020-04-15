@@ -15,9 +15,11 @@ namespace Fase_1
         private void button2_Click_1(object sender, EventArgs e)
         {
             Dictionary<string, List<int>> FirstTree = Tree.FirstTree;
-
+            
             FIRST.ColumnCount = FirstTree.Count;
-            FIRST.RowCount = 400;
+            FIRST.RowCount = 100;
+            FIRST.Rows[0].DefaultCellStyle.BackColor = Color.Yellow;
+
             for (int i = 0; i < FirstTree.Count; i++)
             {
                 string aFirst = FirstTree.ElementAt(i).Key;

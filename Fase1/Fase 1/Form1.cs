@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using System.IO;
-
+using System.Drawing;
+using System.Text;
+using Microsoft.CSharp;
+using System.CodeDom.Compiler;
+using System.Diagnostics;
 
 namespace Fase_1
 {
@@ -17,7 +21,6 @@ namespace Fase_1
         private void button1_Click(object sender, EventArgs e)
         {
             FileUpload fileLecture = new FileUpload();
-            Dictionary<string, List<string>> SETS1 = FileUpload.SETS;
             Automata transition = new Automata();
             Tree tree = new Tree();
             OpenFileDialog ofd = new OpenFileDialog();
@@ -37,7 +40,7 @@ namespace Fase_1
                     followpos = tree.Follows(root);
                     followpos = tree.FollowTable(root, followpos);
                     NodeData = tree.ObtainLeafs(root, NodeData);
-                    Dictionary<string, string> automata = transition.CreateAutomata(root, NodeData, followpos);
+                    Dictionary<string, string>  automata = transition.CreateAutomata(root, NodeData, followpos);
 
                     //introducirlo al arbol con reglas
                     //1ero: numero de nodo
@@ -45,7 +48,10 @@ namespace Fase_1
                     //tercero: dato del arbol
                    
                     FOLLOWS.ColumnCount = followpos.Count;
-                    FOLLOWS.RowCount = 400;
+                    int hola = FOLLOWS.ColumnCount = followpos.Count;
+                    FOLLOWS.RowCount = 100;
+                    FOLLOWS.Rows[0].DefaultCellStyle.BackColor = Color.Yellow;
+                    
                     for (int i = 0; i < followpos.Count; i++)
                     {
                         int a = followpos.ElementAt(i).Key;
@@ -59,20 +65,6 @@ namespace Fase_1
 
                     }
 
-                    SETS.ColumnCount = SETS1.Count;
-                    SETS.RowCount = 400;
-                    for (int i = 0; i < SETS1.Count; i++)
-                    {
-                        string a = SETS1.ElementAt(i).Key;
-                        int b = SETS1[a].Count;
-                        SETS[i, 0].Value = SETS1.ElementAt(i).Key;
-
-                        for (int j = 0; j < b; j++)
-                        {
-                            SETS[i, j + 1].Value = SETS1.ElementAt(i).Value.ElementAt(j);
-                        }
-
-                    }
 
                     Follow.ColumnCount = 2;
                     Follow.RowCount = followpos.Count + 1;
@@ -90,7 +82,6 @@ namespace Fase_1
                     Register = "";
                     root = new ExpressionNode();
                     followpos = new Dictionary<int, List<int>>();
-                    SETS1 = new Dictionary<string, List<string>>();
                     NodeData = new Dictionary<int, string>();
                     automata = new Dictionary<string, string>();
                     fileLecture = new FileUpload();
@@ -147,6 +138,52 @@ namespace Fase_1
         private void label2_Click_1(object sender, EventArgs e)
         {
 
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            Form4 form4 = new Form4();
+            form4.ShowDialog();
+            if (form4.DialogResult == DialogResult.Yes) { }
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                StreamWriter streamWriter = new StreamWriter(saveFileDialog.FileName + ".cs");
+                streamWriter.Write(tbxScanner.Text);
+                streamWriter.Flush();
+                streamWriter.Close();
+            }
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                string path = openFileDialog.FileName;
+
+                StreamReader streamReader = new StreamReader(path);
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.Append(streamReader.ReadToEnd());
+
+                //target framework v 4.6.1
+                CSharpCodeProvider csc = new CSharpCodeProvider(new Dictionary<string, string> { { "CompilerVersion", "v4.0" } });
+                CompilerParameters parameters = new CompilerParameters(new[] { "mscorlib.dll", "System.Core.dll" }, "validacion.exe", true);
+                parameters.GenerateExecutable = true;
+                CompilerResults compilerResults = csc.CompileAssemblyFromSource(parameters, stringBuilder.ToString());
+
+                if (compilerResults.Errors.Cast<CompilerError>().ToList().Count == 0)
+                {
+                    Process.Start(Application.StartupPath + "/" + "validacion.exe");
+                }
+
+            }
         }
     }
 }
