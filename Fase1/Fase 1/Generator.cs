@@ -9,12 +9,11 @@ namespace Fase_1
     class Generator
     {
         StringBuilder sb;
-        int state_principal = 0;
+        int estado = 0;
         Dictionary<string, bool> esFinal = new Dictionary<string, bool>();
 
 
         public Generator(Dictionary<string, string> AFD)
-
         {
             sb = new StringBuilder();
         }
@@ -22,8 +21,9 @@ namespace Fase_1
         private Dictionary<int, List<string>> ObtenerTransiciones(Dictionary<string, string> AFD, List<int> cantidadTransiciones)
         {
             Dictionary<int, List<string>> transiciones = new Dictionary<int, List<string>>();
+            //List<string> insert = new List<string>();
 
-
+            //TODO: agregar nodos con su distintivo si es final o no esFinal = Dictionary<string, bool>
             esFinal = new Dictionary<string, bool>();
 
             for (int i = 0; i < cantidadTransiciones.Count; i++)
@@ -32,7 +32,7 @@ namespace Fase_1
             }
 
             for (int i = 0; i < cantidadTransiciones.Count; i++)
-            { 
+            {   //se selecciona q0 como primera transicion
                 List<string> insert = new List<string>();
 
                 for (int j = 0; j < AFD.Count; j++)
@@ -50,7 +50,7 @@ namespace Fase_1
                     {
                         string add_string = "";
 
-
+                        //se obtiene el dato de movimiento hacia otra transicion
                         for (int k = 1; k < AFD.ElementAt(j).Value.Length; k++)
                         {
                             if (int.TryParse(AFD.ElementAt(j).Value.Substring(k, 1), out int n) == true)
@@ -65,9 +65,9 @@ namespace Fase_1
                         }
 
                         if (AFD.ElementAt(j).Value.Substring(0, 1) == "#")
-                        {   
+                        {   //quiere decir que el nodo al cual se ira es terminal
                             string numero = add_string;
-
+                            //numero = numero.Remove(0, 1);
 
                             esFinal[numero] = true;
                         }
@@ -141,24 +141,24 @@ namespace Fase_1
             totalTransiciones = obtenerCantidadTransiciones(AFD);
             Dictionary<int, List<string>> transiciones = new Dictionary<int, List<string>>();
             transiciones = ObtenerTransiciones(AFD, totalTransiciones);
+            //char principal = readline[pos++];
 
+            sb.AppendLine("case " + estado.ToString() + ":");
 
-            sb.AppendLine("case " + state_principal.ToString() + ":");
-
-            List<string> datos_transicion = transiciones[state_principal];
+            List<string> datos_transicion = transiciones[estado];
 
             for (int i = 0; i < totalTransiciones.Count; i++)
-            {
+            {   //se agregan los datos a la transicion al StringBuilder
 
                 string data = "";
                 data += "if(";
 
                 for (int j = 0; j < datos_transicion.Count; j++)
-                {
+                {// vamos insertando en orden para cambio de estados
 
                     string[] split = datos_transicion.ElementAt(j).Split('/');
 
-
+                    //[0] = numero transicion, [1] con que se va a la transicion
                     if (split[1] == " \'")
                     {
                         split[1] = "\\" + split[1].Trim();
@@ -179,7 +179,7 @@ namespace Fase_1
                                     int count = 1;
                                     int dato_inicial = Convert.ToChar(FileUpload.SETS.ElementAt(k).Value.ElementAt(0));
                                     int dato_final = Convert.ToChar(FileUpload.SETS.ElementAt(k).Value.ElementAt(
-                                         FileUpload.SETS.ElementAt(k).Value.Count - 1));
+                                        FileUpload.SETS.ElementAt(k).Value.Count - 1));
 
                                     if (dato_final > dato_inicial)
                                     {
@@ -226,22 +226,23 @@ namespace Fase_1
 
                 }
                 sb.AppendLine("word_chunk += readline[pos].ToString();");
-                sb.AppendLine("state_principal = " + (i + 1).ToString() + ";");
+                sb.AppendLine("estado = " + (i + 1).ToString() + ";");
 
+                //en retroceso, hacer un principal-- y validar que no se vuelva a ingresar al mismo if
                 sb.AppendLine("pos = pos + 1;");
-                sb.AppendLine("ValuateStr(readline, pos, state_principal);");
+                sb.AppendLine("ValuateStr(readline, pos, estado);");
                 sb.AppendLine("return;");
                 sb.AppendLine("}");
 
             }
 
-            if (state_principal < totalTransiciones.Count)
+            if (estado < totalTransiciones.Count)
             {
-                if (state_principal > 0)
+                if (estado > 0)
                 {
-                    if (esFinal[state_principal.ToString()] == true && transiciones[state_principal].Count == 0)
+                    if (esFinal[estado.ToString()] == true && transiciones[estado].Count == 0)
                     {
-                        sb.AppendLine("error = Retroceso(state_principal);");
+                        sb.AppendLine("error = Retroceso(estado);");
                         sb.AppendLine("if(!error)");
                         sb.AppendLine("{");
                         sb.AppendLine("Console.WriteLine(word_chunk + \":\" + VerificarActions(\"ERROR\").ToString());");
@@ -275,7 +276,7 @@ namespace Fase_1
                     {
                         sb.AppendLine("else");
                         sb.AppendLine("{");
-                        sb.AppendLine("error = Retroceso(state_principal);");
+                        sb.AppendLine("error = Retroceso(estado);");
                         sb.AppendLine("if(!error)");
                         sb.AppendLine("{");
                         sb.AppendLine("Console.WriteLine(word_chunk + \":\" + VerificarActions(\"ERROR\").ToString());");
@@ -313,16 +314,16 @@ namespace Fase_1
 
             }
 
-            if (state_principal + 1 < totalTransiciones.Count)
+            if (estado + 1 < totalTransiciones.Count)
             {
                 sb.AppendLine();
 
                 sb.AppendLine("break;");
-                state_principal = state_principal + 1;
-                GenerateCode(AFD, state_principal);
+                estado = estado + 1;
+                GenerateCode(AFD, estado);
             }
             /*
-            if (state_principal + 1 == totalTransiciones.Count)
+            if (estado + 1 == totalTransiciones.Count)
             {
                 sb.AppendLine("break;");
             }
@@ -336,7 +337,7 @@ namespace Fase_1
             return sb.ToString();
         }
 
-        public string ExportCode(Dictionary<string, string> automata, string path)
+        public string ExportCode(Dictionary<string, string> automata)
         {
             sb.AppendLine("using System;");
             sb.AppendLine("using System.Collections.Generic;");
@@ -359,7 +360,7 @@ namespace Fase_1
             sb.AppendLine();
             sb.AppendLine("static void Main(string[] args)");
             sb.AppendLine("{");
-            sb.AppendLine(FilesPath(path));
+            FilesUpload();
             sb.AppendLine("while(!sr.EndOfStream)");
             sb.AppendLine("{");
             sb.AppendLine("string readline = sr.ReadLine().Trim();");
@@ -369,11 +370,11 @@ namespace Fase_1
             sb.AppendLine("}");
             sb.AppendLine();
 
-            sb.AppendLine("public static void ValuateStr(string readline, int pos, int state_principal)");
+            sb.AppendLine("public static void ValuateStr(string readline, int pos, int estado)");
             sb.AppendLine("{");
             sb.AppendLine("if( pos == readline.Length)");
             sb.AppendLine("{");
-            sb.AppendLine("error = Retroceso(state_principal);");
+            sb.AppendLine("error = Retroceso(estado);");
             sb.AppendLine("if(!error)");
             sb.AppendLine("{");
             sb.AppendLine("Console.WriteLine(word_chunk + \":\" + VerificarActions(\"ERROR\").ToString());");
@@ -402,7 +403,7 @@ namespace Fase_1
             sb.AppendLine("}");
             sb.AppendLine("principal = readline[pos];");
             sb.AppendLine();
-            sb.AppendLine(" switch( " + "state_principal" + " )");
+            sb.AppendLine(" switch( " + "estado" + " )");
             sb.AppendLine(" {");
 
             GenerateCode(automata, 0);
@@ -413,91 +414,44 @@ namespace Fase_1
             //sb.AppendLine("}");
             //sb.AppendLine("}");
 
-            sb.AppendLine("private static bool Retroceso(int state_principal)");
+            sb.AppendLine("private static bool Retroceso(int estado)");
             sb.AppendLine("{");
             sb.AppendLine(EscribirRetroceso());
             sb.AppendLine("}");
-            sb.AppendLine("private static string VerificarActions(string state_principal)");
+            sb.AppendLine("private static int VerificarActions(string estado)");
             sb.AppendLine("{");
             VerificarActions();
             sb.AppendLine("}");
-            sb.AppendLine("private static string VerificationFuntion(string state_principal)");
-            sb.AppendLine("{");
-            VerificationFuntion();
             sb.AppendLine("}");
             sb.AppendLine("}");
             return sb.ToString();
         }
 
+        private void RetreiveTokens()
+        {
 
+        }
 
         private void VerificarActions()
         {
-            int number = 18;
-            sb.AppendLine("switch(state_principal)");
+            sb.AppendLine("switch(estado)");
             sb.AppendLine("{");
 
             for (int i = 0; i < FileUpload.ACTIONS.Count; i++)
             {
-                if (FileUpload.ACTIONS.ElementAt(i).Value == "ERROR")
-                {
-                    sb.AppendLine("case" + "\"" + "ERROR" + "\"" + ":");
-                    sb.AppendLine("return " + "\"" + "54" + "\"" + ";");
-                }
-                else
-                {
-                    sb.AppendLine("case" + "\"" + number++ + "\"" + ":");
-                    sb.AppendLine("return " + "\"" + FileUpload.ACTIONS.ElementAt(i).Value + "\"" + ";");
-                }
-               
+                sb.AppendLine("case" + "\"" + FileUpload.ACTIONS.ElementAt(i).Value + "\"" + ":");
+                sb.AppendLine("return " + FileUpload.ACTIONS.ElementAt(i).Key.ToString() + ";");
             }
 
             sb.AppendLine("default: ");
-            sb.AppendLine("return"+"  "+"VerificationFuntion(state_principal)"+"; ");
+            sb.AppendLine("return 1;");
             sb.AppendLine("}");
         }
-        private void VerificationFuntion()
-        {
-
-            sb.AppendLine("if(state_principal =="+ "\"" + "SETS"+ "\"" + ")");
-            sb.AppendLine("{");
-            sb.AppendLine("return"+ "\""+"\""+";");
-            sb.AppendLine("}");
-            sb.AppendLine("else if(state_principal ==" + "\"" +"TOKENS" +"\""+ ")");
-            sb.AppendLine("{");
-            sb.AppendLine("return" + "\"" + "\"" + ";");
-            sb.AppendLine("}");
-            sb.AppendLine("else if(state_principal ==" + "\"" + "ACTIONS" + "\"" + ")");
-            sb.AppendLine("{");
-            sb.AppendLine("return" + "\"" + "\"" + ";");
-            sb.AppendLine("}");
-            sb.AppendLine("else if(state_principal ==" + "\"" + "RESERVADAS" + "\"" + ")");
-            sb.AppendLine("{");
-            sb.AppendLine("return" + "\"" + "\"" + ";");
-            sb.AppendLine("}");
-            sb.AppendLine("else if(state_principal ==" + "\"" + "LETRA" + "\"" + ")");
-            sb.AppendLine("{");
-            sb.AppendLine("return" + "\"" + 1+"\"" + ";");
-            sb.AppendLine("}");
-            sb.AppendLine("else if(state_principal ==" + "\"" + "DIGITO" + "\"" + ")");
-            sb.AppendLine("{");
-            sb.AppendLine("return" + "\"" +2+ "\"" + ";");
-            sb.AppendLine("}");
-            sb.AppendLine("else if(state_principal ==" + "\"" + "CHARSET" + "\"" + ")");
-            sb.AppendLine("{");
-            sb.AppendLine("return" + "\"" +3+"\"" + ";");
-            sb.AppendLine("}");
-            string data = "";
-            data += "return"+"\""+ 1 +"\""+";";
-            sb.AppendLine(data);
-            sb.AppendLine("}");
-        }
-
 
         private string EscribirRetroceso()
         {
             string data = "";
-            data += "switch(state_principal)\r\n";
+            data += "switch(estado)\r\n";
             data += "{\r\n";
 
             for (int i = 0; i < esFinal.Count; i++)
@@ -510,17 +464,15 @@ namespace Fase_1
             data += "}";
             return data;
         }
-        
-        private string FilesPath(string path)
+        private void FilesUpload()
         {
-            string pathfile = "StreamReader sr = new StreamReader";
-            pathfile += "(";
-            pathfile += "@";
-            pathfile += "\"";
-            pathfile += path;
-            pathfile += "\");";
-
-            return pathfile;
+      
+            sb.AppendLine( "Console.WriteLine(");
+            sb.AppendLine( "\"" + "Ingrese archivo  de validacion" + "\"" + ");" + "\n");
+            sb.AppendLine ( "string path = Console.ReadLine();" + "\n");
+            sb.AppendLine( "StreamReader sr = new StreamReader(path);" + "\n");
+            
         }
     }
 }
+

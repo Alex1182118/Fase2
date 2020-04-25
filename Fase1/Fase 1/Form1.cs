@@ -40,7 +40,7 @@ namespace Fase_1
                     NodeData = tree.ObtainLeafs(root, NodeData);
                     Dictionary<string, string>  automata = transition.CreateAutomata(root, NodeData, followpos);
                     Generator program = new Generator(automata);
-                    tbxScanner.Text = program.ExportCode(automata, path);
+                    tbxScanner.Text = program.ExportCode(automata);
 
                     FOLLOWS.ColumnCount = followpos.Count;
                     int hola = FOLLOWS.ColumnCount = followpos.Count;
