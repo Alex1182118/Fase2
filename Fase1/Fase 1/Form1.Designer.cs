@@ -40,6 +40,7 @@
             this.tbxScanner = new System.Windows.Forms.TextBox();
             this.button5 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
+            this.button7 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.Follow)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.FOLLOWS)).BeginInit();
             this.SuspendLayout();
@@ -132,7 +133,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(994, 70);
+            this.label3.Location = new System.Drawing.Point(1011, 70);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(186, 39);
             this.label3.TabIndex = 18;
@@ -144,7 +145,7 @@
             this.tbxScanner.Multiline = true;
             this.tbxScanner.Name = "tbxScanner";
             this.tbxScanner.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.tbxScanner.Size = new System.Drawing.Size(275, 425);
+            this.tbxScanner.Size = new System.Drawing.Size(301, 425);
             this.tbxScanner.TabIndex = 19;
             // 
             // button5
@@ -167,11 +168,22 @@
             this.button6.UseVisualStyleBackColor = true;
             this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
+            // button7
+            // 
+            this.button7.Location = new System.Drawing.Point(1272, 541);
+            this.button7.Name = "button7";
+            this.button7.Size = new System.Drawing.Size(100, 50);
+            this.button7.TabIndex = 22;
+            this.button7.Text = "SALIR";
+            this.button7.UseVisualStyleBackColor = true;
+            this.button7.Click += new System.EventHandler(this.button7_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1409, 603);
+            this.Controls.Add(this.button7);
             this.Controls.Add(this.button6);
             this.Controls.Add(this.button5);
             this.Controls.Add(this.tbxScanner);
@@ -208,6 +220,7 @@
         private System.Windows.Forms.TextBox tbxScanner;
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.Button button6;
+        private System.Windows.Forms.Button button7;
     }
 }
 

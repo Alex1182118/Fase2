@@ -14,7 +14,6 @@ namespace Fase_1
         Dictionary<int, List<int>> Follow = new Dictionary<int, List<int>>();
         public static Dictionary<string, List<int>> FirstTree = new Dictionary<string, List<int>>();
         public static Dictionary<string, List<int>> LastTree = new Dictionary<string, List<int>>();
-        
         public ExpressionNode PrefixToBinaryTree(string expression)
         {
             Stack<string> Operation = new Stack<string>();

@@ -17,7 +17,6 @@ namespace Fase_1
         {
             InitializeComponent();
         }
-        
         private void button1_Click(object sender, EventArgs e)
         {
             FileUpload fileLecture = new FileUpload();
@@ -27,7 +26,6 @@ namespace Fase_1
             Dictionary<int, List<int>> followpos;
             Dictionary<int, string> NodeData = new Dictionary<int, string>();
             
-
             if (ofd.ShowDialog() == DialogResult.OK)
             {
                 string path = ofd.FileName;
@@ -41,12 +39,9 @@ namespace Fase_1
                     followpos = tree.FollowTable(root, followpos);
                     NodeData = tree.ObtainLeafs(root, NodeData);
                     Dictionary<string, string>  automata = transition.CreateAutomata(root, NodeData, followpos);
+                    Generator program = new Generator(automata);
+                    tbxScanner.Text = program.ExportCode(automata, path);
 
-                    //introducirlo al arbol con reglas
-                    //1ero: numero de nodo
-                    //segundo: followpos
-                    //tercero: dato del arbol
-                   
                     FOLLOWS.ColumnCount = followpos.Count;
                     int hola = FOLLOWS.ColumnCount = followpos.Count;
                     FOLLOWS.RowCount = 100;
@@ -65,7 +60,6 @@ namespace Fase_1
 
                     }
 
-
                     Follow.ColumnCount = 2;
                     Follow.RowCount = followpos.Count + 1;
                     Follow[0, 0].Value = "Estado: ";
@@ -78,25 +72,13 @@ namespace Fase_1
                         Follow[1, i + 1].Value = automata.ElementAt(i).Key;
                         Follow[0, i + 1].Value = automata.ElementAt(i).Value;
                     }
-
-                    Register = "";
-                    root = new ExpressionNode();
-                    followpos = new Dictionary<int, List<int>>();
-                    NodeData = new Dictionary<int, string>();
-                    automata = new Dictionary<string, string>();
-                    fileLecture = new FileUpload();
-                    transition = new Automata();
-                    tree = new Tree();
-                    ofd = new OpenFileDialog();
                 }
                 catch (Exception x)
                 {
                     MessageBox.Show((x.Message), "Atencion", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
 
-
             }
-
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -108,25 +90,20 @@ namespace Fase_1
         {
 
         }
-
         private void Follow_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
 
         }
-
         private void label2_Click(object sender, EventArgs e)
         {
 
         }
-
         private void button2_Click(object sender, EventArgs e)
         {
             Form2 form2 = new Form2();
             form2.ShowDialog();
             if (form2.DialogResult == DialogResult.Yes) { }
-            
         }
-
         private void button3_Click(object sender, EventArgs e)
         {
             Form3 form3 = new Form3();
@@ -134,23 +111,19 @@ namespace Fase_1
             if (form3.DialogResult == DialogResult.Yes) { }
            
         }
-
         private void label2_Click_1(object sender, EventArgs e)
         {
 
         }
-
         private void button4_Click(object sender, EventArgs e)
         {
             Form4 form4 = new Form4();
             form4.ShowDialog();
             if (form4.DialogResult == DialogResult.Yes) { }
         }
-
         private void button5_Click(object sender, EventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
-
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
                 StreamWriter streamWriter = new StreamWriter(saveFileDialog.FileName + ".cs");
@@ -159,7 +132,6 @@ namespace Fase_1
                 streamWriter.Close();
             }
         }
-
         private void button6_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -174,16 +146,21 @@ namespace Fase_1
 
                 //target framework v 4.6.1
                 CSharpCodeProvider csc = new CSharpCodeProvider(new Dictionary<string, string> { { "CompilerVersion", "v4.0" } });
-                CompilerParameters parameters = new CompilerParameters(new[] { "mscorlib.dll", "System.Core.dll" }, "validacion.exe", true);
+                CompilerParameters parameters = new CompilerParameters(new[] { "mscorlib.dll", "System.Core.dll" }, "validation.exe", true);
                 parameters.GenerateExecutable = true;
                 CompilerResults compilerResults = csc.CompileAssemblyFromSource(parameters, stringBuilder.ToString());
 
                 if (compilerResults.Errors.Cast<CompilerError>().ToList().Count == 0)
                 {
-                    Process.Start(Application.StartupPath + "/" + "validacion.exe");
+                    Process.Start(Application.StartupPath + "/" + "validation.exe");
                 }
 
             }
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            Close();
         }
     }
 }

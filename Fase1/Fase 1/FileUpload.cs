@@ -458,7 +458,6 @@ namespace Fase_1
 
                                         //se asigna alSetList
                                         SETS.Add(datas[0].Trim(), SetList);
-
                                     }
 
                                     if (value == "TOKENS")
@@ -921,7 +920,6 @@ namespace Fase_1
                 throw new Exception(e.Message);
             }
 
-          
         }
     }
 }
